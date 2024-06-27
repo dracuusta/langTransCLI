@@ -12,15 +12,14 @@ const options=yargs
                 .help(true)
                 .argv;
 const argv=yargs(hideBin(process.argv)).argv;
-const language=argv.l;
+const language=argv.l.slice(0,2);
 const sentence=argv.s;
 const translator=async ()=>{
-    const text= await translate(sentence,{to:'hi'})
-    console.log(text);
-    return text;
+    const res= await translate(sentence,{to:language})
+    console.log(res.text);
+    return res;
 }
 const main=async()=>{
     const text=await translator();
-    console.log(text);
 }
 main();
