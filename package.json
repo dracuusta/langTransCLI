@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "description": "small nodejs practice cli project",
   "main": "bin/index.js",
+  "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
-  "bin": {  
-    "mycli": "./bin/index.js"  
+  "bin": {
+    "mycli": "./bin/index.js"
+  },
+  "dependencies": {
+    "@vitalets/google-translate-api": "^9.2.0",
+    "yargs": "^17.7.2"
   }
 }
