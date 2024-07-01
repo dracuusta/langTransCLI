@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 const yargs=require("yargs")
-// const chalk=require('chalk')
-// const boxen=require('boxen')
+const tunnel=require('tunnel')
+const chalk=require('chalk')
+var fs=require('fs')
+const createHttpProxyAgent =require('http-proxy-agent')
 const { hideBin }=require('yargs/helpers')
 const {translate}=require('@vitalets/google-translate-api')
 
-
+const agent = createHttpProxyAgent('http://103.152.112.162:80');
 const usage="$0 -l <language> -s <sentence>";
 const options=yargs
                 .usage(usage)
@@ -17,11 +19,31 @@ const argv=yargs(hideBin(process.argv)).argv;
 const language=argv.l;
 const sentence=argv.s;
 const translator=async ()=>{
-    const res= await translate(sentence,{to:language})
-    console.log(res.text)
-    console.log(`Language: ${argv.l}`)
-    console.log(`Sentence: ${argv.s}`)
+    let res;
+    try{
+     res= await translate(sentence,{to:language,fetchOptions:{agent}})
+    }
+    catch(error){
+        console.log(`Invalid api response \nCheck language shorthand \n${error}`);
+        return null;
+    }
+    if(res && res.text){
+    console.log(chalk.keyword('blue')(res.text))
+    console.log(res.from.language.value)
+    try{
+    fs.appendFile('translateFile.txt','converted',(err)=>{
+        if(err) throw err;
+    })}
+    catch(err){
+        console.log(`error in writing file ${err}`)
+    }
+    console.log(chalk.keyword('green')(`Language: ${argv.l}`))
+    console.log(chalk.keyword('green')(`Sentence: ${argv.s}`))
+}else{
+    console.log('No translation result')
+}
     return res;
+
 }
 
 translator();
